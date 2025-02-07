@@ -37,11 +37,13 @@ st.markdown("Explorez les tendances des salaires à travers différentes visuali
 if st.checkbox("Afficher un aperçu des données"):
     st.write(df_salaire)
 
+st.write("Cette petite checkbox permet d'afficher les données du csv.")
 
 #Statistique générales avec describe pandas 
 st.subheader("📌 Statistiques générales")
 st.write(df_salaire.describe())
 
+st.write("Voici un tableau montrant des statistiques générales sur les données.")
 
 ### 3. Distribution des salaires en France par rôle et niveau d'expérience, uilisant px.box et st.plotly_chart
 
@@ -52,6 +54,8 @@ fig = px.box(df_tmp, x="job_title", y="salary", color="experience_level",
             title="Distribution des salaires en France par rôle et niveau d'expérience")
 st.plotly_chart(fig)
 
+st.write("La distibution des salaires est difficilement lisible dû au grand nombre de certains job_title.")
+
 ### 4. Analyse des tendances de salaires :
 #### Salaire moyen par catégorie : en choisisant une des : ['experience_level', 'employment_type', 'job_title', 'company_location'], utilisant px.bar et st.selectbox 
 
@@ -60,6 +64,8 @@ selected = st.selectbox(label="Choix de la variable", options=['experience_level
 
 fig = px.bar(df_salaire, x=selected, y='salary')
 st.plotly_chart(fig)
+
+st.write("La selectbox ci-dessus permet de choisir quelle sera la variable qui sera afficher sur ce graphique, qui représente le salaire moyen.")
 
 ### 5. Corrélation entre variables
 # Sélectionner uniquement les colonnes numériques pour la corrélation
