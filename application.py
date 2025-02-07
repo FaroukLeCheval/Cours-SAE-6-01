@@ -19,6 +19,8 @@ import plotly.express as px
 # Chargement des données
 try:
     df_salaire = pd.read_csv("C:/projet_notebook/ds_salaries.csv")
+    #df_salaire['work_year'] = df_salaire['work_year'].replace(",","")
+    #df_salaire['work_year_clear'] = pd.to_datetime(df_salaire['work_year'], format='%Y').dt.year
     #df_salaire['work_year'].astype('str')
     #df_salaire = df_salaire[(df_salaire['salary'] <= 15000000)]
 except FileNotFoundError:
@@ -84,22 +86,33 @@ top_poste = df_salaire['job_title'].value_counts().head(10)
 top_poste = list(top_poste.index)
 #st.write(top_poste)
 
-df_salaire["id"] = df_salaire.index
-count_by_poste = df_salaire.groupby(['job_title', 'work_year']).agg({'salary': 'mean'})
-count_by_poste = count_by_poste.sort_values('salary', ascending=False).reset_index()
+x = df_salaire[df_salaire["job_title"].isin(top_poste)]
+salary_evolution = x.groupby(['work_year', 'job_title'])['salary_in_usd'].mean().reset_index()
+fig = px.line(salary_evolution, x='work_year', y='salary_in_usd', color='job_title', title='Évolution des salaires moyens (USD) par poste',
+               labels={
+                   'work_year': 'Année',
+                   'salary_in_usd': 'Salaire moyen (USD)',
+                   'job_title': 'Poste'
+               })
 
-fig = px.line(count_by_poste[(count_by_poste['job_title'].isin(top_poste))], x="work_year", y="salary", color="job_title", title="Evolution des salaires pour les 10 postes les plus courants")
 st.plotly_chart(fig)
 
-st.write(count_by_poste)
+x = df_salaire[df_salaire["job_title"].isin(top_poste)]
+salary_evolution = x.groupby(['work_year', 'job_title'])['salary'].mean().reset_index()
+fig = px.line(salary_evolution, x='work_year', y='salary', color='job_title', title='Évolution des salaires moyens par poste',
+               labels={
+                   'work_year': 'Année',
+                   'salary_in_usd': 'Salaire moyen',
+                   'job_title': 'Poste'
+               })
 
+st.plotly_chart(fig)
 
 
 ### 7. Salaire médian par expérience et taille d'entreprise
 
 fig = px.bar(df_salaire.groupby('company_size')['salary'].median(), title="Salaire médian par expérience et taille d'entreprise")
 st.plotly_chart(fig)
-
 
 ### 8. Ajout de filtres dynamiques
 #Filtrer les données par salaire utilisant st.slider pour selectionner les plages 
